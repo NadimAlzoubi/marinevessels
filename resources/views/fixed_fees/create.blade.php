@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="container">
+    <div class="container-fluid">
         <h1>إضافة رسم ثابت جديد</h1>
         <form action="{{ route('fixed_fees.store') }}" method="POST">
             @csrf

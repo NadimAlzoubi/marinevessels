@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* Importing Google Fonts and Boxicons */
-@import "https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
 @import "https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css";
 
@@ -12,7 +12,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Poppins", sans-serif;
+    font-family: "Noto Sans", sans-serif;
     /* Applying 'Poppins' font globally */
 
     transition: all 0.1s ease-in-out;
@@ -54,8 +54,9 @@
     font-size: 20px;
     font-weight: 600;
     opacity: 0;
+    display: none;
     /* Hidden by default, shows when sidebar is expanded */
-    transition: all 0.5s ease;
+    transition: all 1s ease;
 }
 
 .sidebar .logo-details #btn {
@@ -267,7 +268,7 @@
 .sidebar li.profile .job {
     font-size: 12px;
     font-weight: 400;
-    color: #fff;
+    color: #ceff1f;
     white-space: nowrap;
 }
 
@@ -299,6 +300,7 @@
 
 .sidebar.open .logo-details .logo_name {
     opacity: 1;
+    display: block;
     /* Shows logo name in expanded state */
 }
 
@@ -344,6 +346,70 @@
     /* Adjusts home section to sidebar width */
     width: calc(100% - 250px);
 }
+
+/* إخفاء القائمة الفرعية */
+.dropdown-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0;
+    list-style: none;
+    padding-left: 15px;
+    border-left: 2px solid rgba(255, 255, 255, 0.2); /* خط العمود */
+    margin-left: 8px;
+}
+
+/* إظهار عند الفتح */
+.dropdown.active .dropdown-content {
+    max-height: 200px; /* قيمة مناسبة لتتسع للعناصر */
+    opacity: 1;
+}
+
+/* عناصر القائمة الفرعية */
+.dropdown-content li {
+    position: relative;
+    padding-left: 10px; /* تقليل المسافة */
+    margin: 3px 0;
+}
+
+/* الخط الفرعي */
+.branch-line {
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    width: 8px; /* تقليل الطول */
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* الأيقونات داخل القائمة الفرعية */
+.dropdown-content li i {
+    margin-right: 0px; /* تقليل المسافة */
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.sidebar.open .dropdown .arrow {
+    width: 250px;
+    display: block;
+}
+
+/* زر القائمة الرئيسية */
+.dropdown .arrow {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+    display: none;
+}
+
+/* دوران السهم عند الفتح */
+.dropdown.active .arrow {
+    transform: rotate(180deg);
+}
+
+
+
+
+
+
 
 /* Main content (home section) styling */
 .home-section {
@@ -407,7 +473,7 @@
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 15px;
 }
 

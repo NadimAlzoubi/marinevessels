@@ -1,6 +1,6 @@
 <x-app-layout>
     <section class="home-section">
-        <div class="container">
+        <div class="container-fluid">
             {{-- <div class="text">Vessels</div> --}}
             <a href="{{ route('vessels.create') }}" class="btn btn-success mb-3 mt-3">Add New Vessel
                 +</a>
@@ -23,7 +23,7 @@
             @endif
         </div>
         <!-- Responsive Form -->
-        <div class="container mt-2">
+        <div class="container-fluid mt-2">
 
             <div class="row">
                 <div class="col-lg-12 col-md-12">
@@ -35,9 +35,8 @@
                             <table id="vessels-table" class="display">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
+                                        <th>Job No.</th>
                                         <th>Vessel Name</th>
-                                        <th>Job Number</th>
                                         <th>Port Name</th>
                                         <th>Status</th>
                                         <th>Action</th>
@@ -144,13 +143,10 @@
                     [10, 25, 50, 100]
                 ], // إعادة تفعيل خيارات تحديد العدد
                 columns: [{
-                        data: 'id'
+                        data: 'job_no'
                     },
                     {
                         data: 'vessel_name'
-                    },
-                    {
-                        data: 'job_no'
                     },
                     {
                         data: 'port_name'

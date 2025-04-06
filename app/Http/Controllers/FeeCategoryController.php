@@ -4,16 +4,61 @@ namespace App\Http\Controllers;
 
 use App\Models\FeeCategory;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Auth;
 
 class FeeCategoryController extends Controller
 {
     /**
      * عرض جميع فئات الرسوم.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = FeeCategory::all();
-        return view('fee_categories.index', compact('categories'));
+        if ($request->ajax()) {
+            $fee_categories = FeeCategory::query();
+            $canDelete = Auth::check() && (Auth::user()->role === 'admin' || Auth::user()->role === 'editor');
+
+            return DataTables::of($fee_categories)
+                ->addColumn('action', function ($fee_category) use ($canDelete) {
+                    $action = '
+                <div class="dropdown">
+                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton' . $fee_category->id . '" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bx bx-dots-vertical-rounded"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton' . $fee_category->id . '">
+                        <li>
+                            <a class="dropdown-item" href="' . route('fee_categories.show', $fee_category->id) . '">
+                                <i class="bx bx-show-alt"></i> View
+                            </a>
+                        </li>';
+
+                    if ($canDelete) {
+                        $action .= '
+                        <li>
+                            <a class="dropdown-item" href="' . route('fee_categories.edit', $fee_category->id) . '" data-id="' . $fee_category->id . '">
+                                <i class="bx bx-edit"></i> Edit
+                            </a>
+                        </li>
+                        <li>
+                            <form class="d-inline" action="' . route('fee_categories.destroy', $fee_category->id) . '" method="POST">
+                                ' . csrf_field() . '
+                                ' . method_field('DELETE') . '
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bx bx-trash"></i> Delete
+                                </button>
+                            </form>
+                        </li>';
+                    }
+
+                    $action .= '</ul></div>';
+
+                    return $action;
+                })
+                ->rawColumns(['action']) // السماح بعرض الـ HTML في عمود "action"
+                ->make(true); // إرجاع الاستجابة بتنسيق JSON
+        }
+
+        return view('fee_categories.index'); // إرجاع الصفحة عند عدم استخدام AJAX
     }
 
     /**

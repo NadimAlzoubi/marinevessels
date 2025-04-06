@@ -1,7 +1,7 @@
-{{-- <x-app-layout>
+<x-app-layout>
     <section class="home-section">
         <div class="text">Edit Vessel</div>
-        <div class="container">
+        <div class="container-fluid">
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('success') }}
@@ -40,7 +40,7 @@
                                     </div>
                                     <div class="grid-item">
                                         <label for="job_no" class="form-label">Job Number</label>
-                                        <input type="text" class="form-control" id="job_no" name="job_no"
+                                        <input disabled type="text" class="form-control" id="job_no" name="job_no"
                                             value="{{ $vessel->job_no }}" placeholder="Enter job number">
                                     </div>
                                     <div class="grid-item">
@@ -78,4 +78,4 @@
             </div>
         </div>
     </section>
-</x-app-layout> --}}
+</x-app-layout>

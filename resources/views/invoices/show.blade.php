@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    <div class="container">
+    <div class="container-fluid">
         <h1>تفاصيل الفاتورة</h1>
         <div class="card mb-3">
             <div class="card-body">

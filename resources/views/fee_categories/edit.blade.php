@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="container">
+    <div class="container-fluid">
         <h1>تحرير فئة الرسوم</h1>
         <form action="{{ route('fee_categories.update', $category->id) }}" method="POST">
             @csrf

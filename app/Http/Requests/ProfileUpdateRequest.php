@@ -25,6 +25,14 @@ class ProfileUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
+            'username' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique(User::class)->ignore($this->user()->id),
+            ],
+            'active' => ['sometimes', 'boolean'], // اختياري ولكن يجب أن يكون true أو false
+            'role' => ['sometimes', 'in:guest,contributor,editor,admin'], // إذا كان الأدمن يستطيع التعديل
         ];
     }
 }

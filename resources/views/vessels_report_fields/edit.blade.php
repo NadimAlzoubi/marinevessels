@@ -14,7 +14,7 @@
             </div>
         @endif
         <!-- Responsive Form -->
-        <div class="container mt-2">
+        <div class="container-fluid mt-2">
             <div class="row" id="vessel-form">
                 <div class="col-lg-12 col-md-12">
                     <div class="card shadow-sm">

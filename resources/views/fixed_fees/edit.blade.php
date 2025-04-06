@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="container">
+    <div class="container-fluid">
         <h1>تحرير الرسم الثابت</h1>
         <form action="{{ route('fixed_fees.update', $fixedFee->id) }}" method="POST">
             @csrf

@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="container">
+    <div class="container-fluid">
         <h1>الرسوم الثابتة</h1>
         <a href="{{ route('fixed_fees.create') }}" class="btn btn-primary mb-3">إضافة رسم ثابت جديد</a>
         @if (session('success'))

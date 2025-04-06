@@ -1,6 +1,6 @@
 <x-app-layout>
     <section class="home-section">
-        <div class="container">
+        <div class="container-fluid">
             {{-- <span>Vessel Details</span> --}}
             <a href="{{ route('vessels.index') }}" class="btn btn-secondary mb-3 mt-3">Back</a>
             @if (session('success'))
@@ -22,7 +22,7 @@
             @endif
         </div>
 
-        <div class="container mt-2">
+        <div class="container-fluid mt-2">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card shadow-sm">
@@ -46,13 +46,24 @@
                                     Completed
                                 @endif
                             </p>
+                            <p>
+                                <a target="_blank" class="btn btn-info me-2"
+                                    href="{{ route('pdf.vesselReport.vessel_report', ['id' => $vessel->id, 'clickOption' => 'stream']) }}">
+                                    <i class="bx bx-printer"></i> Print report
+                                </a>
+                                
+                                <a class="btn btn-info"
+                                    href="{{ route('pdf.vesselReport.vessel_report', ['id' => $vessel->id, 'clickOption' => 'download']) }}">
+                                    <i class="bx bx-download"></i> Download report
+                                </a>
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <!-- Responsive Form -->
-        <div class="container mt-2">
+        <div class="container-fluid mt-2">
             {{-- <a href="#" class="btn btn-success mb-3" id="add-vessel-button">Add New Vessel +</a> --}}
             <div class="row" id="vessel-form">
                 <div class="col-lg-12 col-md-12">
@@ -63,7 +74,7 @@
                         <div class="card-body">
                             <form action="{{ route('vessels.update', $vessel->id) }}" method="POST">
                                 @csrf
-                                @method('PUT')                            
+                                @method('PUT')
                                 @php
                                     $categories = [
                                         'basic' => [
@@ -76,13 +87,13 @@
                                                     'placeholder' => '',
                                                     'value' => $vessel->vessel_name,
                                                 ],
-                                                (object) [
-                                                    'label' => 'Job Number',
-                                                    'name' => 'job_no',
-                                                    'type' => 'text',
-                                                    'placeholder' => '',
-                                                    'value' => $vessel->job_no,
-                                                ],
+                                                // (object) [
+                                                //     'label' => 'Job Number',
+                                                //     'name' => 'job_no',
+                                                //     'type' => 'text',
+                                                //     'placeholder' => '',
+                                                //     'value' => $vessel->job_no,
+                                                // ],
                                                 (object) [
                                                     'label' => 'Port Name',
                                                     'name' => 'port_name',
@@ -347,8 +358,9 @@
                                             <div class="grid-item">
                                                 <label for="{{ $field->name }}"
                                                     class="form-label">{{ $field->label }}</label>
-                                                <input value="{{ $field->value }}" type="{{ $field->type }}" class="form-control"
-                                                    id="{{ $field->name }}" name="{{ $field->name }}"
+                                                <input value="{{ $field->value }}" type="{{ $field->type }}"
+                                                    class="form-control" id="{{ $field->name }}"
+                                                    name="{{ $field->name }}"
                                                     placeholder="{{ $field->placeholder }}">
                                             </div>
                                         @endforeach

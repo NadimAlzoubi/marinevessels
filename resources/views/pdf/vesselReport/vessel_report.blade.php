@@ -162,6 +162,7 @@
             min-height: 18px;
             margin-right: 10px;
             vertical-align: top;
+            text-align: center;
         }
 
         /* ===== الخاتمة / التوقيع ===== */
@@ -243,7 +244,7 @@
 
     <!-- عنوان الورقة -->
     <div class="report-title">Sailing Report</div>
-    
+
     <!-- الحقول الأساسية في سطر واحد (مثال) -->
     <div class="field-container">
         <span class="field-label">Port:</span>
@@ -288,7 +289,15 @@
     <div class="fields-group">
         <div class="field-row">
             <span class="field-label-inline">Arrived Abu Dhabi On</span>
-            @php list($date, $time) = explode(" ", $aado); @endphp
+            @php
+                // تحقق إذا كانت القيمة موجودة ولم تكن فارغة
+                if (!empty($aado)) {
+                    [$date, $time] = explode(' ', $aado, 2);
+                } else {
+                    $date = 'N/A';
+                    $time = 'N/A';
+                }
+            @endphp
             <span class="field-line-inline">{{ $date }}</span>
             <span> at </span>
             <span class="field-line-inline">{{ $time }}</span>
@@ -296,7 +305,15 @@
         </div>
         <div class="field-row">
             <span class="field-label-inline">NOR Tendered On</span>
-            @php list($date, $time) = explode(" ", $nor_tendered); @endphp
+            @php
+                // تحقق إذا كانت القيمة موجودة ولم تكن فارغة
+                if (!empty($nor_tendered)) {
+                    [$date, $time] = explode(' ', $nor_tendered, 2);
+                } else {
+                    $date = 'N/A';
+                    $time = 'N/A';
+                }
+            @endphp
             <span class="field-line-inline">{{ $date }}</span>
             <span> at </span>
             <span class="field-line-inline">{{ $time }}</span>
@@ -304,7 +321,15 @@
         </div>
         <div class="field-row">
             <span class="field-label-inline">NOR Accepted On</span>
-            @php list($date, $time) = explode(" ", $nor_accepted); @endphp
+            @php
+                // تحقق إذا كانت القيمة موجودة ولم تكن فارغة
+                if (!empty($nor_accepted)) {
+                    [$date, $time] = explode(' ', $nor_accepted, 2);
+                } else {
+                    $date = 'N/A';
+                    $time = 'N/A';
+                }
+            @endphp
             <span class="field-line-inline">{{ $date }}</span>
             <span> at </span>
             <span class="field-line-inline">{{ $time }}</span>
@@ -312,7 +337,15 @@
         </div>
         <div class="field-row">
             <span class="field-label-inline">Dropped Anchor</span>
-            @php list($date, $time) = explode(" ", $dropped_anchor); @endphp
+            @php
+                // تحقق إذا كانت القيمة موجودة ولم تكن فارغة
+                if (!empty($dropped_anchor)) {
+                    [$date, $time] = explode(' ', $dropped_anchor, 2);
+                } else {
+                    $date = 'N/A';
+                    $time = 'N/A';
+                }
+            @endphp
             <span class="field-line-inline">{{ $date }}</span>
             <span> at </span>
             <span class="field-line-inline">{{ $time }}</span>
@@ -320,7 +353,15 @@
         </div>
         <div class="field-row">
             <span class="field-label-inline">Heaved Up Anchor</span>
-            @php list($date, $time) = explode(" ", $heaved_up_anchor); @endphp
+            @php
+                // تحقق إذا كانت القيمة موجودة ولم تكن فارغة
+                if (!empty($heaved_up_anchor)) {
+                    [$date, $time] = explode(' ', $heaved_up_anchor, 2);
+                } else {
+                    $date = 'N/A';
+                    $time = 'N/A';
+                }
+            @endphp
             <span class="field-line-inline">{{ $date }}</span>
             <span> at </span>
             <span class="field-line-inline">{{ $time }}</span>
@@ -328,7 +369,15 @@
         </div>
         <div class="field-row">
             <span class="field-label-inline">Pilot Boarded On</span>
-            @php list($date, $time) = explode(" ", $pilot_boarded); @endphp
+            @php
+                // تحقق إذا كانت القيمة موجودة ولم تكن فارغة
+                if (!empty($pilot_boarded)) {
+                    [$date, $time] = explode(' ', $pilot_boarded, 2);
+                } else {
+                    $date = 'N/A';
+                    $time = 'N/A';
+                }
+            @endphp
             <span class="field-line-inline">{{ $date }}</span>
             <span> at </span>
             <span class="field-line-inline">{{ $time }}</span>
@@ -336,7 +385,15 @@
         </div>
         <div class="field-row">
             <span class="field-label-inline">First Line</span>
-            @php list($date, $time) = explode(" ", $first_line); @endphp
+            @php
+                // تحقق إذا كانت القيمة موجودة ولم تكن فارغة
+                if (!empty($first_line)) {
+                    [$date, $time] = explode(' ', $first_line, 2);
+                } else {
+                    $date = 'N/A';
+                    $time = 'N/A';
+                }
+            @endphp
             <span class="field-line-inline">{{ $date }}</span>
             <span> at </span>
             <span class="field-line-inline">{{ $time }}</span>
@@ -344,7 +401,15 @@
         </div>
         <div class="field-row">
             <span class="field-label-inline">Berthed On</span>
-            @php list($date, $time) = explode(" ", $berthed_on); @endphp
+            @php
+                // تحقق إذا كانت القيمة موجودة ولم تكن فارغة
+                if (!empty($berthed_on)) {
+                    [$date, $time] = explode(' ', $berthed_on, 2);
+                } else {
+                    $date = 'N/A';
+                    $time = 'N/A';
+                }
+            @endphp
             <span class="field-line-inline">{{ $date }}</span>
             <span> at </span>
             <span class="field-line-inline">{{ $time }}</span>
@@ -352,7 +417,15 @@
         </div>
         <div class="field-row">
             <span class="field-label-inline">Made Fast On</span>
-            @php list($date, $time) = explode(" ", $made_fast); @endphp
+            @php
+                // تحقق إذا كانت القيمة موجودة ولم تكن فارغة
+                if (!empty($made_fast)) {
+                    [$date, $time] = explode(' ', $made_fast, 2);
+                } else {
+                    $date = 'N/A';
+                    $time = 'N/A';
+                }
+            @endphp
             <span class="field-line-inline">{{ $date }}</span>
             <span> at </span>
             <span class="field-line-inline">{{ $time }}</span>
@@ -360,7 +433,15 @@
         </div>
         <div class="field-row">
             <span class="field-label-inline">Sailed On</span>
-            @php list($date, $time) = explode(" ", $sailed_on); @endphp
+            @php
+                // تحقق إذا كانت القيمة موجودة ولم تكن فارغة
+                if (!empty($sailed_on)) {
+                    [$date, $time] = explode(' ', $sailed_on, 2);
+                } else {
+                    $date = 'N/A';
+                    $time = 'N/A';
+                }
+            @endphp
             <span class="field-line-inline">{{ $date }}</span>
             <span> at </span>
             <span class="field-line-inline">{{ $time }}</span>

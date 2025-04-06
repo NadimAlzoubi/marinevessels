@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="container">
+    <div class="container-fluid">
         <h1>تحرير الفاتورة</h1>
         <form action="{{ route('invoices.update', $invoice->id) }}" method="POST">
             @csrf

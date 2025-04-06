@@ -11,50 +11,117 @@
         <li>
             <a href="{{ route('dashboard') }}">
                 <i class='bx bx-grid-alt'></i>
-                <span class="links_name">Dashboard</span>
+                <span class="links_name">{{ __('Dashboard') }}</span>
             </a>
-            <span class="tooltip">Dashboard</span>
+            <span class="tooltip">{{ __('Dashboard') }}</span>
         </li>
 
         <li>
             <a href="{{ route('vessels.index') }}">
                 <i class='bx bxs-ship'></i>
-                <span class="links_name">Vessels</span>
+                <span class="links_name">{{ __('Vessels') }}</span>
             </a>
-            <span class="tooltip">Vessels</span>
+            <span class="tooltip">{{ __('Vessels') }}</span>
         </li>
-        
-        <li>
-            <a href="{{ route('fee_categories.index') }}">
-                <i class="bx bx-list-ul"></i>
-                <span class="links_name">Fee Categories</span>
+        {{--  --}}
+        <li class="dropdown">
+            <a href="#" class="dropdown-btn">
+                <i class='bx bx-money'></i>
+                <span class="links_name">{{ __('Financial') }}</span>
+                <i class='bx bx-chevron-down arrow'></i> <!-- أيقونة توسيع -->
             </a>
-            <span class="tooltip">Fee Categories</span>
+            <ul class="dropdown-content">
+                <li>
+                    <a class="text-sm" href="{{ route('invoices.index') }}">
+                        <span class="branch-line"></span> <!-- خط فرعي -->
+                        <i class="bx bx-receipt"></i>{{ __('F-Invoices') }}
+                    </a>
+                </li>
+                <li>
+                    <a class="text-sm" href="{{ route('invoices.index') }}">
+                        <span class="branch-line"></span> <!-- خط فرعي -->
+                        <i class="bx bx-receipt"></i>{{ __('P-Invoices') }}
+                    </a>
+                </li>
+
+                {{-- @admin
+                @endadmin
+
+                @editor
+                @endeditor
+
+                @contributor
+                @endcontributor
+
+                @guestuser
+                @endguestuser
+
+                @notguestuser
+                @endnotguestuser --}}
+
+                @role(['admin', 'editor'])
+                    <li>
+                        <a class="text-sm" href="{{ route('fee_categories.index') }}">
+                            <span class="branch-line"></span> <!-- خط فرعي -->
+                            <i class="bx bx-list-ul"></i>{{ __('Fee Categories') }}
+                        </a>
+                    </li>
+                    <li>
+                        <a class="text-sm" href="{{ route('fixed_fees.index') }}">
+                            <span class="branch-line"></span> <!-- خط فرعي -->
+                            <i class="bx bx-money"></i>{{ __('Fixed Fees') }}
+                        </a>
+                    </li>
+                @endrole
+            </ul>
+            <span class="tooltip">{{ __('Financial') }}</span>
         </li>
 
-        <li>
-            <a href="{{ route('fixed_fees.index') }}">
-                <i class="bx bx-money"></i>
-                <span class="links_name">Fixed Fees</span>
-            </a>
-            <span class="tooltip">Fixed Fees</span>
-        </li>
+        {{--  --}}
 
-        <li>
-            <a href="{{ route('invoices.index') }}">
-                <i class="bx bx-receipt"></i>
-                <span class="links_name">Invoices</span>
-            </a>
-            <span class="tooltip">Invoices</span>
-        </li>
 
-        <li>
-            <a href="{{ route('vessels.index') }}">
-                <i class='bx bx-cog'></i>
-                <span class="links_name">Settings</span>
-            </a>
-            <span class="tooltip">Settings</span>
-        </li>
+        {{--  --}}
+
+        @admin
+            <li class="dropdown">
+                <a href="#" class="dropdown-btn">
+                    <i class='bx bx-cog'></i>
+                    <span class="links_name">{{ __('Settings') }}</span>
+                    <i class='bx bx-chevron-down arrow'></i> <!-- أيقونة توسيع -->
+                </a>
+                <ul class="dropdown-content">
+                    <li>
+                        <a class="text-sm" href="{{ route('admin.users.index') }}">
+                            <span class="branch-line"></span> <!-- خط فرعي -->
+                            <i class='bx bxs-user-detail'></i>{{ __('Manage Users') }}
+                        </a>
+                    </li>
+
+
+                </ul>
+                <span class="tooltip">{{ __('Settings') }}</span>
+            </li>
+        @endadmin
+
+        {{--  --}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <!-- Profile section -->
         <li class="profile">
             <div class="profile-details">
@@ -65,16 +132,35 @@
                             {{ Auth::user()->name }}
                         </a>
                     </div>
-                    <div class="job">@Admin</div>
+                    <div class="job capitalize">{{ '@' . Auth::user()->role }}</div>
                 </div>
             </div>
             <!-- Authentication -->
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <x-responsive-nav-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
+                <x-responsive-nav-link :href="route('logout')"
+                    onclick="event.preventDefault(); this.closest('form').submit();">
                     <i class='bx bx-log-out' id="log_out"></i>
                 </x-responsive-nav-link>
             </form>
         </li>
     </ul>
 </div>
+
+<script>
+    document.querySelectorAll(".dropdown-btn").forEach(button => {
+        button.addEventListener("click", function(e) {
+            e.preventDefault(); // منع التنقل الفوري
+            let parent = this.parentElement;
+            let dropdown = parent.querySelector(".dropdown-content");
+
+            if (parent.classList.contains("active")) {
+                dropdown.style.maxHeight = null; // إغلاق بسلاسة
+            } else {
+                dropdown.style.maxHeight = dropdown.scrollHeight + "px"; // فتح بسلاسة
+            }
+
+            parent.classList.toggle("active");
+        });
+    });
+</script>

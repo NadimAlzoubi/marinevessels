@@ -1,6 +1,6 @@
 <x-app-layout>
     <section class="home-section">
-        <div class="container">
+        <div class="container-fluid">
             <a href="{{ route('vessels.index') }}" class="btn btn-secondary mb-3 mt-3">Back</a>
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -21,7 +21,7 @@
             @endif
         </div>
         <!-- Responsive Form -->
-        <div class="container mt-2">
+        <div class="container-fluid mt-2">
             <div class="row" id="vessel-form">
                 <div class="col-lg-12 col-md-12">
                     <div class="card shadow-sm">
@@ -40,11 +40,11 @@
                                         <input type="text" class="form-control" id="vessel_name" name="vessel_name"
                                             placeholder="Enter vessel name">
                                     </div>
-                                    <div class="grid-item">
+                                    {{-- <div class="grid-item">
                                         <label for="job_no" class="form-label">Job Number</label>
                                         <input type="text" class="form-control" id="job_no" name="job_no"
                                             placeholder="Enter job number">
-                                    </div>
+                                    </div> --}}
                                     <div class="grid-item">
                                         <label for="port_name" class="form-label">Port Name</label>
                                         <input type="text" class="form-control" id="port_name" name="port_name"

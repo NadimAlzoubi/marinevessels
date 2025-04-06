@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="container">
+    <div class="container-fluid">
         <h1>الفواتير</h1>
         <a href="{{ route('invoices.create') }}" class="btn btn-primary mb-3">إنشاء فاتورة جديدة</a>
         @if (session('success'))

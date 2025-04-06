@@ -17,18 +17,14 @@ class VesselsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    // <a href="' . route('vessels.edit', $vessel->id) . '" data-id="' . $vessel->id . '" class="btn btn-primary btn-sm edit-button"><i class="bx bx-edit"></i></a>
 
 
 
-    // <li>
-    //     <a class="dropdown-item" href="' . route('pdf.vesselReport.vessel_report', ["id" => $vessel->id, "clickOption" => "download"]) . '">
-    //         <i class="bx bx-download me-2"></i> Download
-    //     </a>
-    // </li>
+
+    
     // <li>
     //     <a class="dropdown-item" href="' . route('vessels.show', $vessel->id) . '">
-    //         <i class="bx bx-show me-2"></i> View
+    //         <i class="bx bx-show"></i> View
     //     </a>
     // </li>
 
@@ -53,7 +49,11 @@ class VesselsController extends Controller
                                 <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton' . $vessel->id . '">
-                         
+                                <li>
+                                    <a class="dropdown-item" href="' . route('vessels.edit', $vessel->id) . '" data-id="' . $vessel->id . '">
+                                        <i class="bx bx-edit"></i> Edit
+                                    </a>
+                                </li>
                                 <li>
                                     <a class="dropdown-item" href="' . route('invoices.create') . '">
                                         <i class="bx bx-plus-circle"></i> Create Invoice
@@ -66,13 +66,8 @@ class VesselsController extends Controller
                                     </a>
                                 </li>
                                 <li>
-                                    <a target="_blank" class="dropdown-item" href="' . route('pdf.vesselReport.vessel_report', ["id" => $vessel->id, "clickOption" => "stream"]) . '">
-                                        <i class="bx bx-printer me-2"></i> Print report
-                                    </a>
-                                </li>
-                                <li>
                                     <a target="_blank" class="dropdown-item" href="' . route('pdf.proformaInvoice.proforma_invoice', ["id" => $vessel->id, "clickOption" => "stream"]) . '">
-                                        <i class="bx bx-printer me-2"></i> Print proforma
+                                        <i class="bx bx-printer"></i> Print proforma
                                     </a>
                                 </li>
                                 <li>
@@ -90,7 +85,7 @@ class VesselsController extends Controller
                                         ' . csrf_field() . '
                                         ' . method_field('DELETE') . '
                                         <button type="submit" class="dropdown-item text-danger">
-                                            <i class="bx bx-trash me-2"></i> Delete
+                                            <i class="bx bx-trash"></i> Delete
                                         </button>
                                     </form>
                                 </li>
@@ -132,7 +127,6 @@ class VesselsController extends Controller
         // التحقق من صحة البيانات
         $request->validate([
             'vessel_name' => 'required|string',
-            'job_no' => 'nullable|string',
             'port_name' => 'nullable|string',
             'eta' => 'nullable|date',
             'etd' => 'nullable|date',
@@ -184,10 +178,35 @@ class VesselsController extends Controller
         $sailed_on = $request->sailed_on ? Carbon::parse($request->sailed_on)->format('Y-m-d H:i:s') : null;
         $eta_next_port = $request->eta_next_port ? Carbon::parse($request->eta_next_port)->format('Y-m-d H:i:s') : null;
 
+
+        // الحصول على السنة والشهر الحاليين
+        $yearMonth = now()->format('ym'); // صيغة السنة والشهر (مثال: 2504 للشهر 4 من سنة 2025)
+
+        // إيجاد الرقم الأكبر الحالي للوظيفة في الشهر والسنة الحالية
+        $latestJobNo = Vessel::where('job_no', 'like', $yearMonth . '%')
+            ->max('job_no'); // الحصول على أكبر قيمة لل job_no
+
+        // تحديد الرقم التالي
+        if ($latestJobNo) {
+            // استخراج الرقم بعد السنة والشهر
+            $number = substr($latestJobNo, 4) + 1; // إضافة 1 للرقم السابق
+        } else {
+            // إذا لم يكن هناك أرقام سابقة، البداية من 1
+            $number = 1;
+        }
+
+        // تنسيق الرقم ليكون بثلاث خانات (مثال: 001, 002, ...)
+        $formattedNumber = str_pad($number, 3, '0', STR_PAD_LEFT);
+
+        // إنشاء job_no بالصيغة المطلوبة
+        $jobNo = $yearMonth . $formattedNumber;
+
+        // dd($jobNo);
+
         // حفظ البيانات مع التواريخ المحوّلة
         $created = Vessel::create([
             'vessel_name' => $request->vessel_name,
-            'job_no' => $request->job_no,
+            'job_no' => $jobNo,
             'port_name' => $request->port_name,
             'eta' => $eta,
             'etd' => $etd,
@@ -249,7 +268,6 @@ class VesselsController extends Controller
         // التحقق من صحة البيانات
         $validator = Validator::make($request->all(), [
             'vessel_name' => 'required|string',
-            'job_no' => 'nullable|string',
             'port_name' => 'nullable|string',
             'eta' => 'nullable|date',
             'etd' => 'nullable|date',
@@ -311,7 +329,6 @@ class VesselsController extends Controller
         // تحديث البيانات مع القيم الجديدة
         $updated = $vessel->update([
             'vessel_name' => $request->vessel_name,
-            'job_no' => $request->job_no,
             'port_name' => $request->port_name,
             'eta' => $eta,
             'etd' => $etd,

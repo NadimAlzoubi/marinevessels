@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="container">
+    <div class="container-fluid">
         <h1>تفاصيل الرسم الثابت</h1>
         <div class="card">
             <div class="card-body">
