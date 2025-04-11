@@ -34,13 +34,7 @@
                 <li>
                     <a class="text-sm" href="{{ route('invoices.index') }}">
                         <span class="branch-line"></span> <!-- خط فرعي -->
-                        <i class="bx bx-receipt"></i>{{ __('F-Invoices') }}
-                    </a>
-                </li>
-                <li>
-                    <a class="text-sm" href="{{ route('invoices.index') }}">
-                        <span class="branch-line"></span> <!-- خط فرعي -->
-                        <i class="bx bx-receipt"></i>{{ __('P-Invoices') }}
+                        <i class="bx bx-receipt"></i>{{ __('Invoices') }}
                     </a>
                 </li>
 

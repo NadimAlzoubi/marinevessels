@@ -1,8 +1,11 @@
 <x-app-layout>
     <section class="home-section">
         <div class="container-fluid">
-            {{-- <a href="{{ route('invoices.create') }}" class="btn btn-success mb-3 mt-3">Create New Invoice
-                +</a> --}}
+            <div class="text text-center">{{ $vessel->job_no }} | {{ ucfirst($vessel->vessel_name) }}</div>
+            <a href="{{ route('vessels.index') }}" class="btn btn-secondary mb-3">Back</a>
+            <a href="{{ route('vessels.invoices.create', ['vessel' => $vessel->id]) }}"
+                class="btn btn-success mb-3">Create New Invoice
+                +</a>
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('success') }}
@@ -28,20 +31,21 @@
                 <div class="col-lg-12 col-md-12">
                     <div class="card shadow-sm">
                         <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0">Invoices</h5>
+                            <h5 class="mb-0">Vessel invoices</h5>
                         </div>
                         <div class="card-body">
-                            <table id="invoices-table" class="display">
+                            <table id="vessel-invoices-table" class="display">
                                 <thead>
                                     <tr>
-                                        <th>Inv No.</th>
-                                        <th>Invoice Type</th>
-                                        <th>Date</th>
-                                        <th>Vessel</th>
-                                        <th>Subtotal</th>
-                                        <th>Tax Total</th>
-                                        <th>Grand Total</th>
-                                        <th>Actions</th>
+                                    <tr>
+                                        <th>رقم الفاتورة</th>
+                                        <th>نوع الفاتورة</th>
+                                        <th>السفينة</th>
+                                        <th>تاريخ الفاتورة</th>
+                                        <th>الإجمالي</th>
+                                        <th>الإجراءات</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
                                     </tr>
                                 </thead>
                             </table>
@@ -54,7 +58,7 @@
 
     <script>
         $(document).ready(function() {
-            $('#invoices-table').DataTable({
+            $('#vessel-invoices-table').DataTable({
                 dom: '<"row"<"col-md-6 custom-length"l><"col-md-6 custom-search"f>>' +
                     '<"row"<"col-md-12"B>>' +
                     '<"row"<"col-md-12"rt>>' +
@@ -103,7 +107,7 @@
                                 color: 'white',
                                 fillColor: '#343a40'
                             };
-                            doc.content[0].text = 'Invoices';
+                            doc.content[0].text = 'Vessels';
                             doc.styles.title = {
                                 fontSize: 16,
                                 bold: true,
@@ -139,7 +143,7 @@
                 responsive: true,
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('invoices.index') }}',
+                ajax: '{{ route('vessels.invoices.index', ['vessel' => $vessel->id]) }}',
                 lengthMenu: [
                     [10, 25, 50, 100],
                     [10, 25, 50, 100]
@@ -148,17 +152,10 @@
                         data: 'invoice_number'
                     },
                     {
-                        data: 'invoice_type',
-                        render: function(data, type, row) {
-                            if (typeof data !== 'string') return data;
-                            return data.charAt(0).toUpperCase() + data.slice(1);
-                        }
+                        data: 'invoice_type'
                     },
                     {
                         data: 'invoice_date'
-                    },
-                    {
-                        data: 'vessel_info'
                     },
                     {
                         data: 'sub_total'

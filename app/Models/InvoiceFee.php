@@ -13,6 +13,8 @@ class InvoiceFee extends Model
         'invoice_id',
         'fixed_fee_id',
         'quantity',
+        'amount',
+        'tax_rate',
         'discount',
     ];
 

@@ -26,8 +26,8 @@ class FixedFee extends Model
     // علاقة كثير إلى كثير مع الفواتير عبر جدول invoice_fees
     public function invoices()
     {
-        return $this->belongsToMany(Invoice::class, 'invoice_fees')
-                    ->withPivot('quantity', 'discount')
-                    ->withTimestamps();
+        return $this->belongsToMany(Invoice::class, 'invoice_fees', 'fixed_fee_id', 'invoice_id')
+            ->withPivot('quantity', 'discount')
+            ->withTimestamps();
     }
 }

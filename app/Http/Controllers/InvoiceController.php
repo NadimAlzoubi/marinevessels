@@ -2,110 +2,123 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Invoice;
-use App\Models\Vessel;
-use App\Models\InvoiceFee;
 use App\Models\FixedFee;
+use App\Models\Invoice;
+use App\Models\InvoiceFee;
+use App\Models\Vessel;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class InvoiceController extends Controller
 {
-    /**
-     * عرض جميع الفواتير.
-     */
-    public function index()
-    {
-        // جلب الفواتير مع بيانات السفينة والعلاقات إن وجدت
-        $invoices = Invoice::with('vessel', 'fixedFees')->get();
-        return view('invoices.index', compact('invoices'));
-    }
+    use AuthorizesRequests;
 
     /**
-     * عرض نموذج إنشاء فاتورة جديدة.
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $invoices = Invoice::with('vessel')->get();
+
+            $canDelete = Auth::check() && (Auth::user()->role === 'admin' || Auth::user()->role === 'editor');
+
+            return DataTables::of($invoices)
+                ->addColumn('vessel_info', function ($invoices) {
+                    // دمج الـ job_no و vessel_name معًا
+                    return $invoices->vessel->job_no . ' | ' . ucfirst($invoices->vessel->vessel_name);
+                })
+                ->addColumn('action', function ($invoices) use ($canDelete) {
+                    $action = '
+                <div class="dropdown">
+                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton' . $invoices->id . '" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bx bx-dots-vertical-rounded"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton' . $invoices->id . '">
+                        <li>
+                            <a class="dropdown-item" href="' . route('invoices.show', $invoices->id) . '">
+                                <i class="bx bx-show-alt"></i> View
+                            </a>
+                        </li>';
+
+                    if ($canDelete) {
+                        $action .= '
+                        <li>
+                            <a class="dropdown-item" href="' . route('invoices.edit', $invoices->id) . '" data-id="' . $invoices->id . '">
+                                <i class="bx bx-edit"></i> Edit
+                            </a>
+                        </li>
+                        <li>
+                            <form class="d-inline" action="' . route('invoices.destroy', $invoices->id) . '" method="POST">
+                                ' . csrf_field() . '
+                                ' . method_field('DELETE') . '
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bx bx-trash"></i> Delete
+                                </button>
+                            </form>
+                        </li>';
+                    }
+
+                    $action .= '</ul></div>';
+
+                    return $action;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('invoices.index');
+    }
+
+
+    /**
+     * Show the form for creating a new resource.
      */
     public function create()
     {
-        // جلب بيانات السفن والرسوم الثابتة لإظهارها في النموذج
-        $vessels = Vessel::all();
-        $fixedFees = FixedFee::all();
-        return view('invoices.create', compact('vessels', 'fixedFees'));
+        //
     }
 
     /**
-     * حفظ الفاتورة الجديدة وربط الرسوم بها.
+     * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        $invoice = Invoice::create([
-            'vessel_id' => $request->vessel_id,
-            'invoice_type' => $request->invoice_type,
-            'total_amount' => 0, // سنحسب المجموع لاحقًا
-        ]);
-
-        $totalAmount = 0;
-
-        foreach ($request->fees as $feeId => $feeData) {
-            if (!isset($feeData['selected']) || empty($feeData['fee_id'])) {
-                continue;
-            }
-
-            $fee = FixedFee::find($feeData['fee_id']);
-            if (!$fee) {
-                continue;
-            }
-
-            $quantity = $feeData['quantity'] ?? 1;
-            $amount = $feeData['amount'] ?? 0;
-            $tax = $feeData['tax'] ?? 0;
-
-            $total = ($quantity * $amount) + ($quantity * $amount * ($tax / 100));
-
-            $invoice->fees()->create([
-                'fee_id' => $fee->id,
-                'name' => $fee->name,
-                'description' => $feeData['description'] ?? '',
-                'quantity' => $quantity,
-                'amount' => $amount,
-                'tax' => $tax,
-                'total' => $total,
-            ]);
-
-            $totalAmount += $total;
-        }
-
-        $invoice->update(['total_amount' => $totalAmount]);
-
-        return redirect()->route('invoices.index')->with('success', 'تم إنشاء الفاتورة بنجاح');
+        //
     }
 
     /**
-     * عرض تفاصيل فاتورة معينة.
+     * Display the specified resource.
      */
-    public function show($id)
+    public function show(string $id)
     {
-        $invoice = Invoice::with('vessel', 'fixedFees')->findOrFail($id);
+        $invoice = Invoice::with('invoiceFees')->findOrFail($id);
+        // $invoice = Invoice::with('vessel', 'fixedFees')->findOrFail($id);
         return view('invoices.show', compact('invoice'));
     }
 
     /**
-     * عرض نموذج تحرير فاتورة.
+     * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(string $id)
     {
+        // $this->authorize('update', Invoice::class);
         $invoice = Invoice::with('fixedFees')->findOrFail($id);
         $vessels = Vessel::all();
         $fixedFees = FixedFee::all();
-        $invoiceFees = $invoice->fees()->pluck('fee_id')->toArray(); // الرسوم المضافة سابقًا
-
-
+        $invoiceFees = $invoice->fees()->pluck('fixed_fee_id')->toArray(); // الرسوم المضافة سابقًا
         return view('invoices.edit', compact('invoice', 'vessels', 'fixedFees', 'invoiceFees'));
     }
 
     /**
-     * تحديث بيانات الفاتورة والرسوم المرتبطة بها.
+     * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
     {
+        // $this->authorize('update', Invoice::class); 
         $request->validate([
             'invoice_type' => 'required|in:proforma,final',
             'vessel_id'    => 'required|exists:vessels,id',
@@ -113,7 +126,7 @@ class InvoiceController extends Controller
         ]);
 
         $invoice = Invoice::findOrFail($id);
-        $invoice->update($request->only(['invoice_type', 'vessel_id', 'invoice_date']));
+        $invoice->update($request->only(['invoice_type', 'call_type', 'vessel_id', 'invoice_date']));
 
         // إعادة ضبط الرسوم المرتبطة إذا لزم الأمر.
         // يمكنك حذف الرسوم القديمة وإعادة إضافتها أو تعديلها بناءً على احتياجاتك.
@@ -146,43 +159,17 @@ class InvoiceController extends Controller
             'grand_total' => $grandTotal,
         ]);
 
-        return redirect()->route('invoices.index')->with('success', 'تم تحديث الفاتورة بنجاح.');
+        return redirect()->route('vessels.invoices.index', $request->vessel_id)->with('success', 'تم تحديث الفاتورة بنجاح.');
     }
 
     /**
-     * حذف فاتورة.
+     * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
+        // $this->authorize('delete', Invoice::class);
         $invoice = Invoice::findOrFail($id);
         $invoice->delete();
-
-        return redirect()->route('invoices.index')->with('success', 'تم حذف الفاتورة بنجاح.');
+        return redirect()->route('invoices.index')->with('success', 'Deleted successfuly.');
     }
-
-
-
-
-
-
-
-    public function getFeeDetails($id)
-    {
-        $fee = FixedFee::findOrFail($id);
-    
-        return response()->json([
-            'name' => $fee->name,
-            'description' => $fee->description,
-            'amount' => $fee->amount,
-            'tax' => $fee->tax,
-        ]);
-    }
-    
-
-
-
-
-
-
-
 }

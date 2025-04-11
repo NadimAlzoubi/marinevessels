@@ -6,9 +6,10 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VesselsController;
 use App\Http\Controllers\FeeCategoryController;
 use App\Http\Controllers\FixedFeeController;
-use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\VesselInvoicesController;
 use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Middleware\RoleMiddleware;
 
 // اختبارات الترجمة
@@ -59,7 +60,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
-    
+
     // -------------------------------------------------------------------
 
     // مسارات خاصة بكل بالأدمن والمحرر والمساهم
@@ -82,7 +83,16 @@ Route::middleware('auth')->group(function () {
 
         // مسارات الفواتير 
         Route::resource('invoices', InvoiceController::class);
+        
+        // مسار فواتير سفينة محددة
+        Route::resource('vessels.invoices', VesselInvoicesController::class);
+        
+        // مسار الفواتير عامة
+        // Route::resource('invoices', InvoiceController::class);
+
     });
+
+
 
     // -------------------------------------------------------------------
 

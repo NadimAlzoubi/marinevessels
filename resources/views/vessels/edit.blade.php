@@ -1,6 +1,5 @@
 <x-app-layout>
     <section class="home-section">
-        <div class="text">Edit Vessel</div>
         <div class="container-fluid">
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -34,14 +33,14 @@
                                 @method('PUT')
                                 <div class="grid-container">
                                     <div class="grid-item">
-                                        <label for="vessel_name" class="form-label">Vessel Name</label>
-                                        <input type="text" class="form-control" id="vessel_name" name="vessel_name"
-                                            value="{{ $vessel->vessel_name }}" placeholder="Enter vessel name">
-                                    </div>
-                                    <div class="grid-item">
                                         <label for="job_no" class="form-label">Job Number</label>
                                         <input disabled type="text" class="form-control" id="job_no" name="job_no"
                                             value="{{ $vessel->job_no }}" placeholder="Enter job number">
+                                    </div>
+                                    <div class="grid-item">
+                                        <label for="vessel_name" class="form-label">Vessel Name</label>
+                                        <input type="text" class="form-control" id="vessel_name" name="vessel_name"
+                                            value="{{ $vessel->vessel_name }}" placeholder="Enter vessel name">
                                     </div>
                                     <div class="grid-item">
                                         <label for="port_name" class="form-label">Port Name</label>

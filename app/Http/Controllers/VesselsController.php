@@ -5,33 +5,63 @@ namespace App\Http\Controllers;
 use App\Models\Vessel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
-use App\Models\VesselsReportFields;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade\Pdf;
 use ArPHP\I18N\Arabic;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 
 class VesselsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    use AuthorizesRequests;
 
 
-
-
-    
     // <li>
     //     <a class="dropdown-item" href="' . route('vessels.show', $vessel->id) . '">
     //         <i class="bx bx-show"></i> View
     //     </a>
     // </li>
 
+    //     <li>
+    //     <a target="_blank" class="dropdown-item" href="' . route('pdf.proformaInvoice.proforma_invoice', ["id" => $vessel->id, "clickOption" => "stream"]) . '">
+    //         <i class="bx bx-printer"></i> Print proforma
+    //     </a>
+    // </li>
 
+    // <li>
+    // <a class="dropdown-item" href="' . route('vessels.show', $vessel->id) . '">
+    //     <i class="bx bx-receipt"></i> Proforma invoice
+    // </a>
+    // </li>
+    // <li>
+    // <a class="dropdown-item" href="' . route('vessels.show', $vessel->id) . '">
+    //     <i class="bx bx-dollar"></i> Final invoice
+    // </a>
+    // </li>
+
+
+
+
+
+
+
+
+    // $canDoIt = Auth::check() && (Auth::user()->role === 'admin' || Auth::user()->role === 'editor');
+    // if (! $canDoIt) {
+    //     abort(403, 'Unauthorized access.');
+    // }
+
+
+
+    /**
+     * Display a listing of the resource.
+     */
 
     public function create()
     {
+        // $this->authorize('create', Vessel::class); 
         return view('vessels.create');
     }
 
@@ -41,22 +71,20 @@ class VesselsController extends Controller
     {
         if ($request->ajax()) {
             $vessels = Vessel::query();
+
+            $canDelete = Auth::check() && (Auth::user()->role === 'admin' || Auth::user()->role === 'editor');
+
             return DataTables::of($vessels)
-                ->addColumn('action', function ($vessel) {
-                    return '
+                ->addColumn('action', function ($vessel) use ($canDelete) {
+                    $action = '
                         <div class="dropdown">
                             <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton' . $vessel->id . '" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton' . $vessel->id . '">
                                 <li>
-                                    <a class="dropdown-item" href="' . route('vessels.edit', $vessel->id) . '" data-id="' . $vessel->id . '">
-                                        <i class="bx bx-edit"></i> Edit
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="' . route('invoices.create') . '">
-                                        <i class="bx bx-plus-circle"></i> Create Invoice
+                                    <a class="dropdown-item" href="' . route('vessels.invoices.index', $vessel->id) . '">
+                                        <i class="bx bx-dollar"></i> Invoices
                                     </a>
                                 </li>
                             
@@ -64,20 +92,12 @@ class VesselsController extends Controller
                                     <a class="dropdown-item" href="' . route('vessels.show', $vessel->id) . '">
                                         <i class="bx bxs-report"></i> Sailing report
                                     </a>
-                                </li>
+                                </li>';
+                    if ($canDelete) {
+                        $action .= '
                                 <li>
-                                    <a target="_blank" class="dropdown-item" href="' . route('pdf.proformaInvoice.proforma_invoice', ["id" => $vessel->id, "clickOption" => "stream"]) . '">
-                                        <i class="bx bx-printer"></i> Print proforma
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="' . route('vessels.show', $vessel->id) . '">
-                                        <i class="bx bx-receipt"></i> Proforma invoice
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="' . route('vessels.show', $vessel->id) . '">
-                                        <i class="bx bx-dollar"></i> Final invoice
+                                    <a class="dropdown-item" href="' . route('vessels.edit', $vessel->id) . '" data-id="' . $vessel->id . '">
+                                        <i class="bx bx-edit"></i> Edit
                                     </a>
                                 </li>
                                 <li>
@@ -88,10 +108,13 @@ class VesselsController extends Controller
                                             <i class="bx bx-trash"></i> Delete
                                         </button>
                                     </form>
-                                </li>
-                            </ul>
+                                </li>';
+                    }
+                    $action .= '</ul>
                         </div>
                     ';
+                    return $action;
+
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -124,6 +147,7 @@ class VesselsController extends Controller
      */
     public function store(Request $request)
     {
+        // $this->authorize('create', Vessel::class); 
         // التحقق من صحة البيانات
         $request->validate([
             'vessel_name' => 'required|string',
@@ -181,15 +205,16 @@ class VesselsController extends Controller
 
         // الحصول على السنة والشهر الحاليين
         $yearMonth = now()->format('ym'); // صيغة السنة والشهر (مثال: 2504 للشهر 4 من سنة 2025)
-
+        
+        $prefix = 'VSL-' . $yearMonth;
         // إيجاد الرقم الأكبر الحالي للوظيفة في الشهر والسنة الحالية
-        $latestJobNo = Vessel::where('job_no', 'like', $yearMonth . '%')
+        $latestJobNo = Vessel::where('job_no', 'like', $prefix . '%')
             ->max('job_no'); // الحصول على أكبر قيمة لل job_no
 
         // تحديد الرقم التالي
         if ($latestJobNo) {
             // استخراج الرقم بعد السنة والشهر
-            $number = substr($latestJobNo, 4) + 1; // إضافة 1 للرقم السابق
+            $number = substr($latestJobNo, strlen($prefix)) + 1; // إضافة 1 للرقم السابق
         } else {
             // إذا لم يكن هناك أرقام سابقة، البداية من 1
             $number = 1;
@@ -199,9 +224,8 @@ class VesselsController extends Controller
         $formattedNumber = str_pad($number, 3, '0', STR_PAD_LEFT);
 
         // إنشاء job_no بالصيغة المطلوبة
-        $jobNo = $yearMonth . $formattedNumber;
+        $jobNo = $prefix . $formattedNumber;
 
-        // dd($jobNo);
 
         // حفظ البيانات مع التواريخ المحوّلة
         $created = Vessel::create([
@@ -256,6 +280,7 @@ class VesselsController extends Controller
 
     public function edit($id)
     {
+        // $this->authorize('update', Vessel::class); 
         $vessel = Vessel::findOrFail($id);
         return view('vessels.edit', compact('vessel'));
     }
@@ -265,6 +290,7 @@ class VesselsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // $this->authorize('update', Vessel::class); 
         // التحقق من صحة البيانات
         $validator = Validator::make($request->all(), [
             'vessel_name' => 'required|string',
@@ -379,6 +405,7 @@ class VesselsController extends Controller
      */
     public function destroy($id)
     {
+        // $this->authorize('delete', Vessel::class); 
         $vessel = Vessel::findOrFail($id);
         $vessel->delete();
         return redirect()->route('vessels.index')->with('success', 'Vessel deleted successfully.');

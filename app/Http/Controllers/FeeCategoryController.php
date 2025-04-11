@@ -6,9 +6,12 @@ use App\Models\FeeCategory;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class FeeCategoryController extends Controller
 {
+    use AuthorizesRequests;
+    
     /**
      * عرض جميع فئات الرسوم.
      */
@@ -66,6 +69,7 @@ class FeeCategoryController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', FeeCategory::class); 
         return view('fee_categories.create');
     }
 
@@ -74,6 +78,7 @@ class FeeCategoryController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', FeeCategory::class); 
         $request->validate([
             'category_name' => 'required|string|max:255',
             'description'   => 'nullable|string',
@@ -81,7 +86,7 @@ class FeeCategoryController extends Controller
 
         FeeCategory::create($request->only(['category_name', 'description']));
 
-        return redirect()->route('fee_categories.index')->with('success', 'تم إنشاء الفئة بنجاح.');
+        return redirect()->route('fee_categories.index')->with('success', 'Created successfully.');
     }
 
     /**
@@ -98,6 +103,7 @@ class FeeCategoryController extends Controller
      */
     public function edit($id)
     {
+        $this->authorize('update', FeeCategory::class); 
         $category = FeeCategory::findOrFail($id);
         return view('fee_categories.edit', compact('category'));
     }
@@ -107,6 +113,7 @@ class FeeCategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->authorize('update', FeeCategory::class); 
         $request->validate([
             'category_name' => 'required|string|max:255',
             'description'   => 'nullable|string',
@@ -115,7 +122,7 @@ class FeeCategoryController extends Controller
         $category = FeeCategory::findOrFail($id);
         $category->update($request->only(['category_name', 'description']));
 
-        return redirect()->route('fee_categories.index')->with('success', 'تم تحديث الفئة بنجاح.');
+        return redirect()->route('fee_categories.index')->with('success', 'Updated successfully.');
     }
 
     /**
@@ -123,9 +130,10 @@ class FeeCategoryController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorize('delete', FeeCategory::class); 
         $category = FeeCategory::findOrFail($id);
         $category->delete();
 
-        return redirect()->route('fee_categories.index')->with('success', 'تم حذف الفئة بنجاح.');
+        return redirect()->route('fee_categories.index')->with('success', 'Deleted successfully.');
     }
 }

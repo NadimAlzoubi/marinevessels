@@ -11,25 +11,37 @@ class Invoice extends Model
 
     protected $fillable = [
         'invoice_number',
-        'invoice_type', // يمكن أن يكون 'proforma' أو 'final'
+        'invoice_type',
+        'call_type',
         'vessel_id',
         'invoice_date',
+        'currency',
         'sub_total',
         'tax_total',
         'grand_total',
     ];
 
-    // علاقة الفاتورة بالسفينة
     public function vessel()
     {
         return $this->belongsTo(Vessel::class);
     }
 
-    // علاقة كثير إلى كثير مع الرسوم الثابتة عبر جدول invoice_fees
+    public function fees()
+    {
+        return $this->belongsToMany(FixedFee::class, 'invoice_fees', 'invoice_id', 'fixed_fee_id')
+            ->withPivot('quantity', 'amount', 'tax_rate', 'discount')
+            ->withTimestamps();
+    }
+
     public function fixedFees()
     {
-        return $this->belongsToMany(FixedFee::class, 'invoice_fees')
-                    ->withPivot('quantity', 'discount')
-                    ->withTimestamps();
+        return $this->belongsToMany(FixedFee::class, 'invoice_fees', 'invoice_id', 'fixed_fee_id')
+            ->withPivot('quantity', 'amount', 'tax_rate', 'discount')
+            ->withTimestamps();
+    }
+
+    public function invoiceFees()
+    {
+        return $this->hasMany(InvoiceFee::class);
     }
 }

@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\FixedFee;
 use App\Models\FeeCategory;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class FixedFeeController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * عرض جميع الرسوم الثابتة.
      */
@@ -22,6 +25,7 @@ class FixedFeeController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', FixedFee::class); 
         // جلب فئات الرسوم لإظهارها في القائمة المنسدلة
         $categories = FeeCategory::all();
         return view('fixed_fees.create', compact('categories'));
@@ -32,6 +36,7 @@ class FixedFeeController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', FixedFee::class); 
         $request->validate([
             'fee_name'        => 'required|string|max:255',
             'description'     => 'nullable|string',
@@ -59,6 +64,7 @@ class FixedFeeController extends Controller
      */
     public function edit($id)
     {
+        $this->authorize('update', FixedFee::class); 
         $fixedFee = FixedFee::findOrFail($id);
         $categories = FeeCategory::all();
         return view('fixed_fees.edit', compact('fixedFee', 'categories'));
@@ -69,6 +75,7 @@ class FixedFeeController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->authorize('update', FixedFee::class); 
         $request->validate([
             'fee_name'        => 'required|string|max:255',
             'description'     => 'nullable|string',
@@ -88,6 +95,7 @@ class FixedFeeController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorize('delete', FixedFee::class); 
         $fixedFee = FixedFee::findOrFail($id);
         $fixedFee->delete();
 
