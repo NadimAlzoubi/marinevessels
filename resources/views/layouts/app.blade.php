@@ -7,12 +7,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     {{-- <link href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" rel="stylesheet"> --}}
     <!-- DataTables Responsive CSS -->
@@ -73,6 +74,11 @@
         @include('layouts.navigation')
         {{ $slot }}
     </main>
+
+    <!-- الفوتر -->
+    {{-- <footer class="bg-gray-900 text-white text-center py-2">
+        © {{ date('Y') }} www.Nadim.pro | All rights reserved.
+    </footer> --}}
     <script>
         // Get the sidebar, close button, and search button elements
         let sidebar = document.querySelector(".sidebar");

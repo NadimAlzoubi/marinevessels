@@ -9,8 +9,14 @@ use App\Http\Controllers\FixedFeeController;
 use App\Http\Controllers\VesselInvoicesController;
 use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Middleware\RoleMiddleware;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\TariffCategoryController;
+use App\Http\Controllers\PricingRuleController;
+use App\Http\Controllers\ConditionTypeController;
 
 // اختبارات الترجمة
 // use Illuminate\Support\Facades\App;
@@ -66,9 +72,7 @@ Route::middleware('auth')->group(function () {
     // مسارات خاصة بكل بالأدمن والمحرر والمساهم
     Route::middleware([RoleMiddleware::class . ':admin,editor,contributor'])->group(function () {
         // مسار الداش بورد
-        Route::get('/dashboard', function () {
-            return view('dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         // مسارات تقرير السفينة
         Route::get('/pdf/vesselReport/{id}/{clickOption?}', [VesselsController::class, 'generateSailingReportPdf'])
@@ -83,13 +87,41 @@ Route::middleware('auth')->group(function () {
 
         // مسارات الفواتير 
         Route::resource('invoices', InvoiceController::class);
-        
+
         // مسار فواتير سفينة محددة
         Route::resource('vessels.invoices', VesselInvoicesController::class);
-        
+
         // مسار الفواتير عامة
         // Route::resource('invoices', InvoiceController::class);
 
+        // مسار العملاء
+        Route::resource('clients', ClientController::class);
+
+
+
+
+        // طرق الخدمات
+        Route::resource('services', ServiceController::class);
+        Route::patch('services/{service}/toggle-active', [ServiceController::class, 'toggleActive'])->name('services.toggle-active');
+
+        // طرق فئات التعريفة
+        Route::resource('tariff-categories', TariffCategoryController::class);
+        Route::patch('tariff-categories/{tariffCategory}/toggle-active', [TariffCategoryController::class, 'toggleActive'])->name('tariff-categories.toggle-active');
+
+        // طرق قواعد التسعير
+        Route::resource('pricing-rules', PricingRuleController::class);
+        Route::patch('pricing-rules/{pricingRule}/toggle-active', [PricingRuleController::class, 'toggleActive'])->name('pricing-rules.toggle-active');
+        Route::post('pricing-rules/{pricingRule}/test', [PricingRuleController::class, 'testRule'])->name('pricing-rules.test');
+
+        // طرق أنواع الشروط
+        Route::resource('condition-types', ConditionTypeController::class);
+        Route::patch('condition-types/{conditionType}/toggle-active', [ConditionTypeController::class, 'toggleActive'])->name('condition-types.toggle-active');
+
+        // طرق إضافية للفواتير
+        Route::get('vessels/{vessel}/applicable-rules', [PricingRuleController::class, 'getApplicableRules'])->name('vessels.applicable-rules');
+        // إضافة طرق لاختبار قواعد التسعير والحصول على القواعد المطبقة لسفينة معينة
+        // Route::get('/test-pricing-rules', [VesselInvoicesController::class, 'testPricingRules']);
+        // Route::get('/vessels/{vessel}/applicable-rules', [VesselInvoicesController::class, 'getApplicableRulesForVessel']);
     });
 
 

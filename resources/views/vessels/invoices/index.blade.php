@@ -4,7 +4,7 @@
             <div class="text text-center">{{ $vessel->job_no }} | {{ ucfirst($vessel->vessel_name) }}</div>
             <a href="{{ route('vessels.index') }}" class="btn btn-secondary mb-3">Back</a>
             <a href="{{ route('vessels.invoices.create', ['vessel' => $vessel->id]) }}"
-                class="btn btn-success mb-3">Create New Invoice
+                class="btn btn-success mb-3">Create New Service
                 +</a>
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -37,15 +37,14 @@
                             <table id="vessel-invoices-table" class="display">
                                 <thead>
                                     <tr>
-                                    <tr>
-                                        <th>رقم الفاتورة</th>
-                                        <th>نوع الفاتورة</th>
-                                        <th>السفينة</th>
-                                        <th>تاريخ الفاتورة</th>
-                                        <th>الإجمالي</th>
-                                        <th>الإجراءات</th>
-                                        <th>الإجراءات</th>
-                                    </tr>
+                                        <th>Inv No.</th>
+                                        <th>Service Type</th>
+                                        <th>Date</th>
+                                        {{-- <th>Vessel</th> --}}
+                                        <th>Subtotal</th>
+                                        <th>Tax Total</th>
+                                        <th>Grand Total</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -152,11 +151,18 @@
                         data: 'invoice_number'
                     },
                     {
-                        data: 'invoice_type'
+                        data: 'invoice_type',
+                        render: function(data, type, row) {
+                            if (typeof data !== 'string') return data;
+                            return data.charAt(0).toUpperCase() + data.slice(1);
+                        }
                     },
                     {
                         data: 'invoice_date'
                     },
+                    // {
+                    //     data: 'vessel_info'
+                    // },
                     {
                         data: 'sub_total'
                     },

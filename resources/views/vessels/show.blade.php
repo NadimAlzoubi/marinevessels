@@ -30,28 +30,39 @@
                             <h5 class="mb-0">Vessel Details</h5>
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">{{ $vessel->vessel_name }}</h5>
-                            <p><strong>Job Number:</strong> {{ $vessel->job_no }}</p>
-                            <p><strong>Port Name:</strong> {{ $vessel->port_name }}</p>
-                            <p><strong>ETA:</strong> {{ \Carbon\Carbon::parse($vessel->eta)->format('d/m/Y h:i A') }}
-                            </p>
-                            <p><strong>ETD:</strong> {{ \Carbon\Carbon::parse($vessel->etd)->format('d/m/Y h:i A') }}
-                            </p>
-                            <p><strong>Status:</strong>
-                                @if ($vessel->status == 1)
-                                    Pending
-                                @elseif($vessel->status == 2)
-                                    In Progress
-                                @elseif($vessel->status == 3)
-                                    Completed
-                                @endif
-                            </p>
+                            <div class="row mb-2">
+                                <div class="col-md-4"><strong>Job Number:</strong> {{ $vessel->job_no }}</div>
+                                <div class="col-md-4"><strong>Vessel:</strong> {{ $vessel->vessel_name }}</div>
+                                <div class="col-md-4"><strong>Port Name:</strong> {{ $vessel->port_name }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4"><strong>ETA:</strong>
+                                    {{ \Carbon\Carbon::parse($vessel->eta)->format('d/m/Y h:i A') }}</div>
+                                <div class="col-md-4"><strong>ETD:</strong>
+                                    {{ \Carbon\Carbon::parse($vessel->etd)->format('d/m/Y h:i A') }}</div>
+                                <div class="col-md-4"><strong>Status:</strong>
+                                    @php
+                                        $statuses = [
+                                            1 => '<span class="badge bg-warning text-dark">Pending</span>',
+                                            2 => '<span class="badge bg-info text-white">In Progress</span>',
+                                            3 => '<span class="badge bg-success text-white">Completed</span>',
+                                        ];
+                                    @endphp
+
+                                    {!! $statuses[$vessel->status] ?? '<span class="badge bg-secondary">Unknown</span>' !!}
+
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col-md-4"><strong>NRT:</strong> {{ $vessel->nrt }}</div>
+                                <div class="col-md-4"><strong>GRT:</strong> {{ $vessel->grt }}</div>
+                            </div>
                             <p>
                                 <a target="_blank" class="btn btn-info me-2"
                                     href="{{ route('pdf.vesselReport.vessel_report', ['id' => $vessel->id, 'clickOption' => 'stream']) }}">
                                     <i class="bx bx-printer"></i> Print report
                                 </a>
-                                
+
                                 <a class="btn btn-info"
                                     href="{{ route('pdf.vesselReport.vessel_report', ['id' => $vessel->id, 'clickOption' => 'download']) }}">
                                     <i class="bx bx-download"></i> Download report

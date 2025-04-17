@@ -12,10 +12,17 @@ class InvoiceFee extends Model
     protected $fillable = [
         'invoice_id',
         'fixed_fee_id',
+        'description', 
         'quantity',
         'amount',
         'tax_rate',
         'discount',
+        'pricing_method',
+        'pricing_context',
+    ];
+
+    protected $casts = [
+        'pricing_context' => 'json',
     ];
 
     // علاقة سجل الرسوم مع الفاتورة

@@ -235,8 +235,8 @@
             <td>23/03/2025</td>
             <td class="label">Status</td>
             <td>At Berth</td>
-            <td class="label"></td>
-            <td></td>
+            <td class="label">Currency</td>
+            <td>USD</td>
         </tr>
     </table>
 

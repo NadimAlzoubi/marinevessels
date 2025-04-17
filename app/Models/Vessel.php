@@ -50,6 +50,7 @@ class Vessel extends Model
         'next_port_of_call', // الميناء القادم
         'eta_next_port',  // وقت الوصول للميناء القادم
         'any_requirements', // أي متطلبات خاصة
+        'client_id', // رمز العميل
     ];
 
 
@@ -79,4 +80,16 @@ class Vessel extends Model
         'sailed_on' => 'datetime',
         'eta_next_port' => 'datetime',
     ];
+
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }   
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
+
 }

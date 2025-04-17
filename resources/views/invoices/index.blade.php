@@ -1,7 +1,7 @@
 <x-app-layout>
     <section class="home-section">
         <div class="container-fluid">
-            {{-- <a href="{{ route('invoices.create') }}" class="btn btn-success mb-3 mt-3">Create New Invoice
+            {{-- <a href="{{ route('invoices.create') }}" class="btn btn-success mb-3 mt-3">Create New Service
                 +</a> --}}
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -28,14 +28,14 @@
                 <div class="col-lg-12 col-md-12">
                     <div class="card shadow-sm">
                         <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0">Invoices</h5>
+                            <h5 class="mb-0">Services</h5>
                         </div>
                         <div class="card-body">
                             <table id="invoices-table" class="display">
                                 <thead>
                                     <tr>
                                         <th>Inv No.</th>
-                                        <th>Invoice Type</th>
+                                        <th>Service Type</th>
                                         <th>Date</th>
                                         <th>Vessel</th>
                                         <th>Subtotal</th>
@@ -103,7 +103,7 @@
                                 color: 'white',
                                 fillColor: '#343a40'
                             };
-                            doc.content[0].text = 'Invoices';
+                            doc.content[0].text = 'Services';
                             doc.styles.title = {
                                 fontSize: 16,
                                 bold: true,

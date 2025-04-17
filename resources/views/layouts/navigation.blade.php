@@ -23,6 +23,14 @@
             </a>
             <span class="tooltip">{{ __('Vessels') }}</span>
         </li>
+
+        <li>
+            <a href="{{ route('clients.index') }}">
+                <i class='bx bxs-group'></i>
+                <span class="links_name">{{ __('Clients') }}</span>
+            </a>
+            <span class="tooltip">{{ __('Clients') }}</span>
+        </li>
         {{--  --}}
         <li class="dropdown">
             <a href="#" class="dropdown-btn">
@@ -31,12 +39,68 @@
                 <i class='bx bx-chevron-down arrow'></i> <!-- أيقونة توسيع -->
             </a>
             <ul class="dropdown-content">
+{{-- 
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('services.*') ? 'active' : '' }}"
+                        href="{{ route('services.index') }}">
+                        <i class="fas fa-cogs"></i> الخدمات
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('tariff-categories.*') ? 'active' : '' }}"
+                        href="{{ route('tariff-categories.index') }}">
+                        <i class="fas fa-tags"></i> فئات التعريفة
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('pricing-rules.*') ? 'active' : '' }}"
+                        href="{{ route('pricing-rules.index') }}">
+                        <i class="fas fa-calculator"></i> قواعد التسعير
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('condition-types.*') ? 'active' : '' }}"
+                        href="{{ route('condition-types.index') }}">
+                        <i class="fas fa-filter"></i> أنواع الشروط
+                    </a>
+                </li> --}}
+
+
+
+
+                <li>
+                    <a class="text-sm" href="{{ route('services.index') }}">
+                        <span class="branch-line"></span> <!-- خط فرعي -->
+                        <i class="bx bx-receipt"></i>{{ __('الخدمات') }}
+                    </a>
+                </li>
+                <li>
+                    <a class="text-sm" href="{{ route('tariff-categories.index') }}">
+                        <span class="branch-line"></span> <!-- خط فرعي -->
+                        <i class="bx bx-receipt"></i>{{ __('فئات التعريفة') }}
+                    </a>
+                </li>
+                <li>
+                    <a class="text-sm" href="{{ route('pricing-rules.index') }}">
+                        <span class="branch-line"></span> <!-- خط فرعي -->
+                        <i class="bx bx-receipt"></i>{{ __('قواعد التسعير') }}
+                    </a>
+                </li>
+                <li>
+                    <a class="text-sm" href="{{ route('condition-types.index') }}">
+                        <span class="branch-line"></span> <!-- خط فرعي -->
+                        <i class="bx bx-receipt"></i>{{ __('أنواع الشروط') }}
+                    </a>
+                </li>
+
+
                 <li>
                     <a class="text-sm" href="{{ route('invoices.index') }}">
                         <span class="branch-line"></span> <!-- خط فرعي -->
-                        <i class="bx bx-receipt"></i>{{ __('Invoices') }}
+                        <i class="bx bx-receipt"></i>{{ __('Services') }}
                     </a>
                 </li>
+
 
                 {{-- @admin
                 @endadmin
@@ -119,6 +183,9 @@
         <!-- Profile section -->
         <li class="profile">
             <div class="profile-details">
+                {{-- <i class='bx bx-user'></i> --}}
+                {{-- <i class='bx bxs-user usericon'></i> --}}
+                {{-- <i class='bx bx-user-circle usericon'></i> --}}
                 <img src="{{ asset('images/profile1.png') }}" alt="profileImg">
                 <div class="name_job">
                     <div class="name">

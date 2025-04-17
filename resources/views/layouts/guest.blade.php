@@ -14,7 +14,7 @@
 
     <!-- استدعاء Tailwind CSS عبر CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
+    
     <!-- استدعاء jQuery عبر CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -28,10 +28,13 @@
 </head>
 
 <body class="font-sans text-gray-900 antialiased">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
+    <div class="min-h-screen flex flex-col sm:justify-start items-center sm:pt-0 bg-gray-100 dark:bg-gray-900">
         <div>
             <a href="/">
-                <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+
+                {{-- <img src="{{ asset('images/favicon.png') }}" width="200px" alt="Logo"> --}}
+                <img class="pt-6" src="{{ asset('images/mv.png') }}" width="250px" alt="Logo">
+                {{-- <x-application-logo class="w-20 h-20 fill-current text-gray-500" /> --}}
             </a>
         </div>
         <div

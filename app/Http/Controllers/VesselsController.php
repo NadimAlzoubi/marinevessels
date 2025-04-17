@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\Vessel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -17,43 +18,10 @@ class VesselsController extends Controller
 {
     use AuthorizesRequests;
 
-
-    // <li>
-    //     <a class="dropdown-item" href="' . route('vessels.show', $vessel->id) . '">
-    //         <i class="bx bx-show"></i> View
-    //     </a>
-    // </li>
-
-    //     <li>
-    //     <a target="_blank" class="dropdown-item" href="' . route('pdf.proformaInvoice.proforma_invoice', ["id" => $vessel->id, "clickOption" => "stream"]) . '">
-    //         <i class="bx bx-printer"></i> Print proforma
-    //     </a>
-    // </li>
-
-    // <li>
-    // <a class="dropdown-item" href="' . route('vessels.show', $vessel->id) . '">
-    //     <i class="bx bx-receipt"></i> Proforma invoice
-    // </a>
-    // </li>
-    // <li>
-    // <a class="dropdown-item" href="' . route('vessels.show', $vessel->id) . '">
-    //     <i class="bx bx-dollar"></i> Final invoice
-    // </a>
-    // </li>
-
-
-
-
-
-
-
-
     // $canDoIt = Auth::check() && (Auth::user()->role === 'admin' || Auth::user()->role === 'editor');
     // if (! $canDoIt) {
     //     abort(403, 'Unauthorized access.');
     // }
-
-
 
     /**
      * Display a listing of the resource.
@@ -62,7 +30,8 @@ class VesselsController extends Controller
     public function create()
     {
         // $this->authorize('create', Vessel::class); 
-        return view('vessels.create');
+        $clients = Client::all();
+        return view('vessels.create', compact('clients'));
     }
 
 
@@ -84,7 +53,7 @@ class VesselsController extends Controller
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton' . $vessel->id . '">
                                 <li>
                                     <a class="dropdown-item" href="' . route('vessels.invoices.index', $vessel->id) . '">
-                                        <i class="bx bx-dollar"></i> Invoices
+                                        <i class="bx bx-dollar"></i> Services
                                     </a>
                                 </li>
                             
@@ -114,7 +83,6 @@ class VesselsController extends Controller
                         </div>
                     ';
                     return $action;
-
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -184,6 +152,7 @@ class VesselsController extends Controller
             'next_port_of_call' => 'nullable|string',
             'eta_next_port' => 'nullable|date',
             'any_requirements' => 'nullable|string',
+            'client_id' => 'nullable|string',
         ]);
 
         // تحويل التواريخ إلى تنسيق Y-m-d H:i:s باستخدام Carbon
@@ -205,8 +174,8 @@ class VesselsController extends Controller
 
         // الحصول على السنة والشهر الحاليين
         $yearMonth = now()->format('ym'); // صيغة السنة والشهر (مثال: 2504 للشهر 4 من سنة 2025)
-        
-        $prefix = 'VSL-' . $yearMonth;
+
+        $prefix = 'MVSL-' . $yearMonth;
         // إيجاد الرقم الأكبر الحالي للوظيفة في الشهر والسنة الحالية
         $latestJobNo = Vessel::where('job_no', 'like', $prefix . '%')
             ->max('job_no'); // الحصول على أكبر قيمة لل job_no
@@ -264,6 +233,7 @@ class VesselsController extends Controller
             'next_port_of_call' => $request->next_port_of_call,
             'eta_next_port' => $eta_next_port,
             'any_requirements' => $request->any_requirements,
+            'client_id' => $request->client_id,
         ]);
 
         // التحقق من نجاح التخزين
@@ -282,7 +252,8 @@ class VesselsController extends Controller
     {
         // $this->authorize('update', Vessel::class); 
         $vessel = Vessel::findOrFail($id);
-        return view('vessels.edit', compact('vessel'));
+        $clients = Client::all();
+        return view('vessels.edit', compact('vessel', 'clients'));
     }
 
     /**
@@ -327,6 +298,7 @@ class VesselsController extends Controller
             'next_port_of_call' => 'nullable|string',
             'eta_next_port' => 'nullable|date',
             'any_requirements' => 'nullable|string',
+            'client_id' => 'nullable|string',
         ]);
         // التحقق من فشل الفاليديشن
         if ($validator->fails()) {
@@ -388,6 +360,7 @@ class VesselsController extends Controller
             'next_port_of_call' => $request->next_port_of_call,
             'eta_next_port' => $eta_next_port,
             'any_requirements' => $request->any_requirements,
+            'client_id' => $request->client_id,
         ]);
 
         // التحقق من نجاح التحديث

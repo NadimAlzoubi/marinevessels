@@ -25,20 +25,15 @@ class Invoice extends Model
     {
         return $this->belongsTo(Vessel::class);
     }
-
+    
     public function fees()
     {
         return $this->belongsToMany(FixedFee::class, 'invoice_fees', 'invoice_id', 'fixed_fee_id')
-            ->withPivot('quantity', 'amount', 'tax_rate', 'discount')
-            ->withTimestamps();
+            ->withPivot('quantity', 'amount', 'tax_rate', 'discount', 'description')
+            ->withTimestamps()->with('feeCategory'); 
+
     }
 
-    public function fixedFees()
-    {
-        return $this->belongsToMany(FixedFee::class, 'invoice_fees', 'invoice_id', 'fixed_fee_id')
-            ->withPivot('quantity', 'amount', 'tax_rate', 'discount')
-            ->withTimestamps();
-    }
 
     public function invoiceFees()
     {

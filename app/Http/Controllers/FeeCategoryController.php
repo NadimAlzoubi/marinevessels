@@ -61,7 +61,7 @@ class FeeCategoryController extends Controller
                 ->make(true); // إرجاع الاستجابة بتنسيق JSON
         }
 
-        return view('fee_categories.index'); // إرجاع الصفحة عند عدم استخدام AJAX
+        return view('fee_categories.index');
     }
 
     /**
@@ -69,7 +69,7 @@ class FeeCategoryController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', FeeCategory::class); 
+        // $this->authorize('create', FeeCategory::class); 
         return view('fee_categories.create');
     }
 
@@ -78,7 +78,7 @@ class FeeCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', FeeCategory::class); 
+        // $this->authorize('create', FeeCategory::class); 
         $request->validate([
             'category_name' => 'required|string|max:255',
             'description'   => 'nullable|string',
@@ -103,7 +103,7 @@ class FeeCategoryController extends Controller
      */
     public function edit($id)
     {
-        $this->authorize('update', FeeCategory::class); 
+        // $this->authorize('update', FeeCategory::class); 
         $category = FeeCategory::findOrFail($id);
         return view('fee_categories.edit', compact('category'));
     }
@@ -113,7 +113,7 @@ class FeeCategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->authorize('update', FeeCategory::class); 
+        // $this->authorize('update', FeeCategory::class); 
         $request->validate([
             'category_name' => 'required|string|max:255',
             'description'   => 'nullable|string',
@@ -130,7 +130,7 @@ class FeeCategoryController extends Controller
      */
     public function destroy($id)
     {
-        $this->authorize('delete', FeeCategory::class); 
+        // $this->authorize('delete', FeeCategory::class); 
         $category = FeeCategory::findOrFail($id);
         $category->delete();
 

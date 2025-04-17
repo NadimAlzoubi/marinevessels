@@ -34,8 +34,19 @@
                                 <div class="grid-container">
                                     <div class="grid-item">
                                         <label for="job_no" class="form-label">Job Number</label>
-                                        <input disabled type="text" class="form-control" id="job_no" name="job_no"
-                                            value="{{ $vessel->job_no }}" placeholder="Enter job number">
+                                        <input disabled type="text" class="form-control" value="{{ $vessel->job_no }}">
+                                    </div>
+
+                                    <div class="grid-item">
+                                        <label for="client_id" class="block text-gray-700">Client (Owner)</label>
+                                        <select name="client_id" id="client_id" class="form-select">
+                                            <option value="">--Select Client--</option>
+                                            @foreach ($clients as $client)
+                                                <option value="{{ $client->id }}" {{ old('client_id', $vessel->client_id ?? '') == $client->id ? 'selected' : '' }}>
+                                                    {{ $client->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="grid-item">
                                         <label for="vessel_name" class="form-label">Vessel Name</label>
@@ -60,14 +71,18 @@
                                     <div class="grid-item">
                                         <label for="status" class="form-label">Status</label>
                                         <select class="form-select" id="status" name="status">
-                                            <option value="1" {{ $vessel->status == 1 ? 'selected' : '' }}>Pending</option>
-                                            <option value="2" {{ $vessel->status == 2 ? 'selected' : '' }}>In Progress</option>
-                                            <option value="3" {{ $vessel->status == 3 ? 'selected' : '' }}>Completed</option>
+                                            <option value="1" {{ $vessel->status == 1 ? 'selected' : '' }}>Pending
+                                            </option>
+                                            <option value="2" {{ $vessel->status == 2 ? 'selected' : '' }}>In
+                                                Progress</option>
+                                            <option value="3" {{ $vessel->status == 3 ? 'selected' : '' }}>
+                                                Completed</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-end mt-3">
-                                    <a href="{{ route('vessels.index') }}" class="btn btn-outline-secondary me-2">Cancel</a>
+                                    <a href="{{ route('vessels.index') }}"
+                                        class="btn btn-outline-secondary me-2">Cancel</a>
                                     <button type="submit" class="btn btn-primary">Update</button>
                                 </div>
                             </form>

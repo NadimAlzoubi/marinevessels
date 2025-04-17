@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FixedFee extends Model
 {
@@ -13,14 +14,21 @@ class FixedFee extends Model
         'fee_name',
         'description',
         'amount',
-        'tax_rate',
+        'pricing_rule',
         'fee_category_id',
+        'tariff_category_id',
     ];
+
+    // أضف العلاقة مع TariffCategory
+    public function tariffCategory(): BelongsTo
+    {
+        return $this->belongsTo(TariffCategory::class);
+    }
 
     // علاقة الرسوم الثابتة بفئة الرسوم
     public function feeCategory()
     {
-        return $this->belongsTo(FeeCategory::class);
+        return $this->belongsTo(FeeCategory::class, 'fee_category_id');
     }
 
     // علاقة كثير إلى كثير مع الفواتير عبر جدول invoice_fees

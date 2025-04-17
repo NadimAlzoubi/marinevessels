@@ -1,4 +1,5 @@
 <x-app-layout>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
     <section class="home-section">
         <div class="container-fluid">
             <a href="{{ route('vessels.index') }}" class="btn btn-secondary mb-3 mt-3">Back</a>
@@ -36,19 +37,27 @@
 
                                 <div class="grid-container">
                                     <div class="grid-item">
-                                        <label for="vessel_name" class="form-label">Vessel Name</label>
-                                        <input type="text" class="form-control" id="vessel_name" name="vessel_name"
-                                            placeholder="Enter vessel name">
+                                        <label for="client_id" class="form-label">Client</label>
+                                        <select name="client_id" id="client_id" class="form-select">
+                                            <option value="">--Select Client--</option>
+                                            @foreach ($clients as $client)
+                                                @if ($client->status == 'active')
+                                                    <option value="{{ $client->id }}"
+                                                        {{ old('client_id', $vessel->client_id ?? '') == $client->id ? 'selected' : '' }}>
+                                                        {{ $client->name }}
+                                                    </option>
+                                                @endif
+                                            @endforeach
+                                        </select>
                                     </div>
-                                    {{-- <div class="grid-item">
-                                        <label for="job_no" class="form-label">Job Number</label>
-                                        <input type="text" class="form-control" id="job_no" name="job_no"
-                                            placeholder="Enter job number">
-                                    </div> --}}
+                                    <div class="grid-item">
+                                        <label for="vessel_name" class="form-label">Vessel Name</label>
+                                        <input type="text" class="form-control" id="vessel_name" name="vessel_name">
+                                    </div>
+
                                     <div class="grid-item">
                                         <label for="port_name" class="form-label">Port Name</label>
-                                        <input type="text" class="form-control" id="port_name" name="port_name"
-                                            placeholder="Enter port name">
+                                        <input type="text" class="form-control" id="port_name" name="port_name">
                                     </div>
                                     <div class="grid-item">
                                         <label for="eta" class="form-label">ETA</label>
@@ -79,6 +88,18 @@
                 </div>
             </div>
         </div>
-
     </section>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#client_id').select2({
+                placeholder: "--Select Client--",
+                allowClear: true,
+                width: '100%',
+                dropdownAutoWidth: true
+            });
+        });
+    </script>
 </x-app-layout>

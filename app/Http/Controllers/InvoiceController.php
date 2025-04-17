@@ -21,7 +21,6 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-
             $invoices = Invoice::with('vessel')->get();
 
             $canDelete = Auth::check() && (Auth::user()->role === 'admin' || Auth::user()->role === 'editor');
@@ -95,72 +94,23 @@ class InvoiceController extends Controller
      */
     public function show(string $id)
     {
-        $invoice = Invoice::with('invoiceFees')->findOrFail($id);
-        // $invoice = Invoice::with('vessel', 'fixedFees')->findOrFail($id);
+        $invoice = Invoice::with('fees')->findOrFail($id);
         return view('invoices.show', compact('invoice'));
     }
+
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
-        // $this->authorize('update', Invoice::class);
-        $invoice = Invoice::with('fixedFees')->findOrFail($id);
-        $vessels = Vessel::all();
+        $invoice = Invoice::with('fees')->findOrFail($id);
+        $vessel = $invoice->vessel;
         $fixedFees = FixedFee::all();
-        $invoiceFees = $invoice->fees()->pluck('fixed_fee_id')->toArray(); // الرسوم المضافة سابقًا
-        return view('invoices.edit', compact('invoice', 'vessels', 'fixedFees', 'invoiceFees'));
+
+        return view('invoices.edit', compact('invoice', 'vessel', 'fixedFees'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        // $this->authorize('update', Invoice::class); 
-        $request->validate([
-            'invoice_type' => 'required|in:proforma,final',
-            'vessel_id'    => 'required|exists:vessels,id',
-            'invoice_date' => 'required|date',
-        ]);
-
-        $invoice = Invoice::findOrFail($id);
-        $invoice->update($request->only(['invoice_type', 'call_type', 'vessel_id', 'invoice_date']));
-
-        // إعادة ضبط الرسوم المرتبطة إذا لزم الأمر.
-        // يمكنك حذف الرسوم القديمة وإعادة إضافتها أو تعديلها بناءً على احتياجاتك.
-        // هنا مثال مبسط لحذف الرسوم القديمة وإعادة إضافتها:
-        $invoice->fixedFees()->detach();
-
-        $subTotal = 0;
-        if ($request->has('fixed_fees')) {
-            foreach ($request->fixed_fees as $feeId => $quantity) {
-                if ($quantity > 0) {
-                    $fixedFee = FixedFee::findOrFail($feeId);
-                    $lineAmount = $fixedFee->amount * $quantity;
-                    $subTotal += $lineAmount;
-
-                    InvoiceFee::create([
-                        'invoice_id'   => $invoice->id,
-                        'fixed_fee_id' => $feeId,
-                        'quantity'     => $quantity,
-                        'discount'     => 0,
-                    ]);
-                }
-            }
-        }
-
-        $taxTotal = $subTotal * 0.05;
-        $grandTotal = $subTotal + $taxTotal;
-        $invoice->update([
-            'sub_total'   => $subTotal,
-            'tax_total'   => $taxTotal,
-            'grand_total' => $grandTotal,
-        ]);
-
-        return redirect()->route('vessels.invoices.index', $request->vessel_id)->with('success', 'تم تحديث الفاتورة بنجاح.');
-    }
 
     /**
      * Remove the specified resource from storage.
